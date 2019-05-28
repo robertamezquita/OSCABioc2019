@@ -5,6 +5,6 @@ os:
 cache:
   packages: true
 r:
-  - bioc-devel
+  - bioc-release
 before_install:
   - tlmgr install index
