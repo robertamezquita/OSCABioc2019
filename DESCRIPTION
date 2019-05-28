@@ -1,0 +1,24 @@
+Package: OSCABioc2019
+Title: Orchestrating Single-Cell Analysis with Bioconductor: Workshop Edition 2019
+Version: 0.0.0.9000
+Authors@R:
+    c(person(given = "Robert",
+             family = "Amezquita",
+             role = c("aut", "cre"),
+             email = "robert.amezquita@fredhutch.org",
+             comment = c(ORCID = "0000-0001-6868-7193")),
+      person(given = "Stephanie",
+             family = "Hicks",
+	     role = c("aut"),
+	     email = "shicks19@jhu.edu",
+	     comment = c(ORCID = "")))
+Description: Vignette that follows from the manuscript Orchestrating Single-Cell Analysis with Bioconductor. Designed for the Bioconductor 2019 conference.
+License: Artistic-2.0
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr, rmarkdown
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.1
