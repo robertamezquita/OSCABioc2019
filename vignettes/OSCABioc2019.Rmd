@@ -29,11 +29,14 @@ knitr::opts_chunk$set(cache=FALSE, error=FALSE, message=FALSE, warning=FALSE)
 
 ## Workshop Description
 
-TBD
+This workshop gives an introductory overview of analyzing single-cell data, particularly RNA-seq, using Bioconductor software. This workshop will help participants to understand essential Bioconductor infrastructure, such as the *SingleCellExperiment* class, and various analytical routines using real-world data. Finally, this workshop is modeled after the manuscript *"Orchestrating Single-Cell Analysis with Bioconductor"* (Amezquita et al. 2019). Students will analyze provided example datasets on their personal laptop. This workshop will be a mixture of example code shown by instructors (available through this repository), short exercises, and discussion.
+
 
 ## Pre-requisites
 
 * Basic knowledge of R syntax
+* Some familiarity with S4 objects may be helpful, but is not required
+* Some familiarity with tidyverse syntax and methods, such as the usage of pipes, may be helpful, but is not required
 * Familiarity with high-throughput gene expression data as obtained from RNA-seq
 
 Relevant background reading:
@@ -76,8 +79,11 @@ Students will be able to run code interactively during the workshop on their per
 * Utilize the *SingleCellExperiment* object for annotation, subsetting, and processing via ad-hoc and established methods
 * Produce descriptive plots from *SingleCellExperiment* objects to evaluate key quality control and processing steps
 
+---
 
-## SingleCellExperiment
+## Introduction
+
+### The *SingleCellExperiment* Class
 
 `r knitr::include_graphics(file.path(system.file(package='OSCABioc2019', 'vignettes'), "singlecellexperiment-overview.png"))`
 
