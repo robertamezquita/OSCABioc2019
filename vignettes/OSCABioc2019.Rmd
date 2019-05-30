@@ -23,8 +23,8 @@ knitr::opts_chunk$set(cache=FALSE, error=FALSE, message=FALSE, warning=FALSE)
 
 ## Instructors names and contact information
 
-* Robert A. Amezquita, robert.amezquita@fredhutch.org
-* Stephanie C. Hicks, shicks19@jhu.edu
+* Robert A. Amezquita^[Fred Hutchinson Cancer Research Center, Seattle, WA, USA] (<robert.amezquita@fredhutch.org>)
+* Stephanie C. Hicks^[John Hopkins University, Dept. of Biostatistics, Baltimore, MD, USA] (<shicks19@jhu.edu>)
 
 
 ## Workshop Description
@@ -37,11 +37,13 @@ This workshop gives an introductory overview of analyzing single-cell data, part
 * Basic knowledge of R syntax
 * Some familiarity with S4 objects may be helpful, but is not required
 * Some familiarity with tidyverse syntax and methods, such as the usage of pipes, may be helpful, but is not required
-* Familiarity with high-throughput gene expression data as obtained from RNA-seq
+* Familiarity with high-throughput gene expression data as obtained from RNA-seq; familiarity with single-cell RNA-seq helpful, but not required
 
 Relevant background reading:
 
 * [@OSCA]
+
+In this workflow, we will be using a dataset from the [`CellBench_data`](https://github.com/LuyiTian/CellBench_data) scRNA-seq benchmarking dataset collection. Specifically, we will be working with is the [`CellBench_data/data/sincell_with_class_5cl.RData`](https://github.com/LuyiTian/CellBench_data/blob/master/data/sincell_with_class_5cl.RData) dataset, which is an object that contains 5 sorted cell lines that were sequenced on the 10X Genomics platform. We will be working with a limited version of this dataset.
 
 
 ## Workshop Participation
@@ -51,16 +53,39 @@ Students will be able to run code interactively during the workshop on their per
 
 ## _R_ / _Bioconductor_ packages used
 
-* TBD: url here
+First, please make sure you have the latest Bioconductor release version 3.9.
+See [Bioconductor installation](https://www.bioconductor.org/install)
+instructions:
 
+```{r, eval = FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+## Bioconductor 3.9 Stable Release
+BiocManager::install(version = "3.9")
+```
+
+* [SingleCellExperiment](https://bioconductor.org/packages/SingleCellExperiment)
+* [scater](https://bioconductor.org/packages/scater)
+
+```{r, eval = FALSE}
+library(scater)
+```
+
+```{r, echo = FALSE}
+suppressPackageStartupMessages({
+    library(scater)
+})
+```
 
 ## Time outline
 
-1 hour workshop consisting of the following:
+50 min workshop consisting of the following:
 
-| Activity                              | Time |
-|---------------------------------------|------|
-| TBD                                   | TBDm |
+| Activity                                        | Time |
+|-------------------------------------------------|------|
+| Introduction to workshop                        |   5m |
+| Framework of single-cell RNA-seq analysis       |  10m |
+| Infrastructure: the SingleCellExperiment class  |   5m |
 
 
 ## Workshop goals and objectives
@@ -81,12 +106,96 @@ Students will be able to run code interactively during the workshop on their per
 
 ---
 
-## Introduction
+## Overview of a basic workflow for analyzing single-cell RNA-seq data
 
-### The *SingleCellExperiment* Class
+`r knitr::include_graphics(file.path(system.file(package='OSCABioc2019', 'vignettes'), "scrnaseq-workflow-overview.png"))`
+
+
+
+
+
 
 `r knitr::include_graphics(file.path(system.file(package='OSCABioc2019', 'vignettes'), "singlecellexperiment-overview.png"))`
 
 
+```{r}
+## Before loading the data -------
+## Essential preprocessing - alignment and quantification of counts
+## various ways to do this, Cellranger for 10X, Alevin (Salmon), Kallisto
+## here we are going to assume this was already done and that you have a counts matrix,
+## and have read it into R into a SingleCellExperiment object
+## refer to DropletUtils read10xCounts() for 10X data, or tximeta/tximport for kallisto/salmon/alevin
+
+## Loading the data ============================================================
+## Introduce data availability on Bioconductor, ExperimentHub
+library(SingleCellExperiment)
+library(TabulaMurisData)
+sce <- TabulaMurisDroplet()
 
 
+## Exercises ---------------------------
+## 1. The `TabulaMurisData` package is just one of many experimental datasets that Bioconductor hosts. To find more, head to the [Bioconductor BiocViews portal](http://bioconductor.org/packages/release/BiocViews.html), and peruse the ExperimentData tab. Try searching the table for single-cell RNA-seq experiments (some terms to try: 10X, single cell, scRNA).
+
+## 2. Bioconductor data packages are hosted on Bioconductor's `ExperimentHub`, which includes curated data from courses, publications, or experiments. To view all the datasets available, install the [ExperimentHub](https://bioconductor.org/packages/release/bioc/html/ExperimentHub.html) Bioconductor package. Load the `ExperimentHub` library, run `eh = ExperimentHub()`, and view the `eh` object. From the title column, try to find more scRNA-seq experiments (hint: use the `grep` function).
+
+
+
+## Exploring cell-level characteristics: colData
+## refers to columns (cells, samples) within experiment
+## in public datasets, will often contain essential data for interpretation
+## in real datasets, you will have to provide based on barcodes or post-hoc from analysis
+
+colData(sce)
+
+## Subsetting the data ------------
+
+
+
+## Subset the dataset to two cell populations and two mice
+populations <- colData(sce)$cell_ontology_class %in% c("T cell", "B cell")
+tissue <- colData(sce)$tissue == 'Spleen'
+
+
+sce_sub <- sce[, (populations & tissue)]
+
+## Evenly subsample 500 cells per mouse x tissue
+
+colData(sce_sub)$mouse_id
+
+
+sce_populations <- sce[, populations]
+
+table(sce_populations$mouse_id, sce_populations$tissue, sce_populations$cell_ontology_classi)
+
+
+
+
+library(scater)
+library(data.table)
+
+
+## Loading the Main Data
+eh <- ExperimentHub()
+## query(eh, "TabulaMurisData")
+sce <- eh[["EH1617"]]
+sce <- TabulaMurisDroplet()
+
+## Inspect our new SingleCellExperiment object
+sce
+
+## Take a look at colData annotation of interest - cell ontology
+colData(sce)[, c('tissue', 'cell_ontology_class')]
+
+## Subset the dataset to two cell populations and two mice
+pops <- colData(sce)[,"cell_ontology_class"] %in% c("granulocyte","monocyte")
+
+## Note the populations are only present in these mice
+mice <- colData(sce)[,"mouse_id"] %in% c("3-F-56","3-F-57")
+
+## Subset down the SCE object to the 1250 cells of interest
+sce <- sce[, mice & pops]
+
+
+
+
+```

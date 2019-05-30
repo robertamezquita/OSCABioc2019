@@ -4,7 +4,7 @@ os:
   - linux
 cache:
   packages: true
-r:
-  - bioc-release
+install:
+  R -e 'install.packages("BiocManager"); BiocManager::install(version = "3.10", ask=FALSE); BiocManager::install(c("SingleCellExperiment", "scater", "scran", "batchelor"), version = “devel”, ask = FALSE)'
 before_install:
   - tlmgr install index
