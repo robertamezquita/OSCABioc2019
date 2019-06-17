@@ -610,6 +610,7 @@ library(cellassign)
 library(tensorflow)
 
 set.seed(1234)
+reticulate::py_set_seed(1234)
 fit <- cellassign(sce[rownames(rho), ],
                   marker_gene_info = rho,
                   s = sizeFactors(sce),
