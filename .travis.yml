@@ -9,7 +9,7 @@ r:
 before_install:
   - tlmgr install index
 install:
-   R -e 'devtools::install_github("irrationone/cellassign")'
+   R -e 'install.packages("devtools"); devtools::install_github("irrationone/cellassign")'
 
 
 
