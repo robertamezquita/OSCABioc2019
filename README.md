@@ -29,7 +29,17 @@ Students will be able to run code interactively during the workshop on their per
 
 ## _R_ / _Bioconductor_ packages used
 
-* TBD: url here
+* [SingleCellExperiment](https://bioconductor.org/packages/SingleCellExperiment)
+* [scater](https://bioconductor.org/packages/scater)
+* [TENxPBMCData](https://bioconductor.org/packages/TENxPBMCData)
+* [DropletUtils](https://bioconductor.org/packages/DropletUtils))
+* [scater](https://bioconductor.org/packages/scater)
+* [scran](https://bioconductor.org/packages/scran)
+* [igraph](https://igraph.org/r/)
+* [devtools](https://github.com/r-lib/devtools)
+* [tidyr](https://tidyr.tidyverse.org)
+* [tensorflow](https://tensorflow.rstudio.com)
+* [cellassign](https://github.com/Irrationone/cellassign)
 
 
 ## Time outline
