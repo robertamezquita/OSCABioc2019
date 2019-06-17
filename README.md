@@ -58,16 +58,16 @@ Students will be able to run code interactively during the workshop on their per
 
 # Workshop Goals and Objectives
 
-## Learning goals
+### Learning goals
 
 * Describe the framework needed to implement a basic single-cell RNA-seq analysis
 * Describe the utility and design of the *SingleCellExperiment* object in the context of the analysis framework
 * Identify critical steps within a typical single-cell RNA-seq analysis that can greatly influence end-results
-* Understand the differences between single-cell vs. bulk based technologies, and the advantages/disadvantages of each
 
 
-## Learning objectives
+### Learning objectives
 
 * Import single-cell RNA-seq data from raw counts into a *SingleCellExperiment* object
 * Utilize the *SingleCellExperiment* object for annotation, subsetting, and processing via ad-hoc and established methods
 * Produce descriptive plots from *SingleCellExperiment* objects to evaluate key quality control and processing steps
+* Perform a basic end-to-end analysis of a simple yet heterogeneous scRNA-seq dataset
