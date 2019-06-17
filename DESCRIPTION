@@ -22,3 +22,14 @@ Suggests:
 VignetteBuilder: knitr, rmarkdown
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
+Imports: 
+    BiocManager,
+    TENxPBMCData,
+    DropletUtils,
+    scater,
+    scran,
+    igraph,
+    devtools,
+    tidyr,
+    tensorflow,
+    cellassign
