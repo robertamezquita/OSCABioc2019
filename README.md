@@ -44,11 +44,16 @@ Students will be able to run code interactively during the workshop on their per
 
 ## Time outline
 
-1 hour workshop consisting of the following:
+50 min workshop consisting of the following:
 
-| Activity                              | Time |
-|---------------------------------------|------|
-| TBD                                   | TBDm |
+| Activity                                        | Time |
+|-------------------------------------------------|------|
+| Introduction to Workshop                        |   5m |
+| Infrastructure: the SingleCellExperiment class  |  10m |
+| Framework of Single-Cell RNA-seq analysis       |  10m |
+| Data processing (QC, Norm, Feature Selection)   |  10m |
+| Downstream: Clustering, DE, Annotation          |  10m |
+| Sharing Data: Interactive Analysis              |   5m |
 
 
 # Workshop Goals and Objectives
