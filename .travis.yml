@@ -9,12 +9,12 @@ r:
 before_install:
   - tlmgr install index
 install:
-   R -e 'install.packages("devtools"); devtools::install_github("irrationone/cellassign")'
+   R -e 'install.packages("devtools"); devtools::install_github("irrationone/cellassign"); BiocManager::install(c("TENxPBMCData", "DropletUtils", "tidyr"))'
 
+   
+# install:
+#   R -e 'install.packages("BiocManager"); BiocManager::install(version = "3.10", ask=FALSE); BiocManager::install(c("TENxPBMCData", "DropletUtils", "scater", "scran", "igraph", "devtools", "tidyr", "tensorflow"), version = "devel", ask = FALSE); devtools::install_github("irrationone/cellassign")'
 
-
-  # install:
-# #   R -e 'install.packages("BiocManager"); BiocManager::install(version = "3.10", ask=FALSE); BiocManager::install(c("TENxPBMCData", "DropletUtils", "scater", "scran", "igraph", "devtools", "tidyr", "tensorflow"), version = "devel", ask = FALSE); devtools::install_github("irrationone/cellassign")'
 
 # language: r
 # sudo: false
