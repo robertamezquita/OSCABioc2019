@@ -93,8 +93,6 @@ devtools::install_github('irrationone/cellassign') # automated annotation of cel
 ```{r, eval = FALSE}
     library(devtools)
     library(tidyr)
-    library(tensorflow)
-    library(cellassign)
     library(BiocParallel)
     library(iSEE)
     library(TENxPBMCData)
@@ -107,8 +105,6 @@ devtools::install_github('irrationone/cellassign') # automated annotation of cel
 suppressPackageStartupMessages({
     library(devtools)
     library(tidyr)
-    library(tensorflow)
-    library(cellassign)
     library(BiocParallel)
     library(iSEE)
     library(TENxPBMCData)
@@ -359,7 +355,7 @@ sce <- computeSumFactors(sce, clusters = quick_clusters)
 These (cell) size factors are then used to log-normalize the counts data:
 
 ```{r}
-sce <- normalize(sce)
+sce <- scater::normalize(sce)
 ```
 
 ```{r}
