@@ -13,16 +13,17 @@ Authors@R:
 	     email = "shicks19@jhu.edu",
 	     comment = c(ORCID = "")))
 Description: Vignette that follows from the manuscript Orchestrating Single-Cell Analysis with Bioconductor. Designed for the Bioconductor 2019 conference.
-License: Artistic-2.0
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Suggests: 
-    knitr,
-    rmarkdown
 VignetteBuilder: knitr, rmarkdown
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
-Imports: 
+Imports:
+    SingleCellExperiment,
+    KernSmooth,
+    pheatmap,
+    qpdf,
     BiocManager,
     BiocParallel,
     iSEE,
@@ -34,6 +35,10 @@ Imports:
     devtools,
     tidyr,
     tensorflow,
-    cellassign
+    cellassign,
+    uwot
 Remotes:
     Irrationone/cellassign
+Suggests: 
+    knitr,
+    rmarkdown

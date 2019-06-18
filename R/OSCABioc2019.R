@@ -1,2 +1,0 @@
-#' @import SingleCellExperiment
-NULL
