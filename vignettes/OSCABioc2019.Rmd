@@ -320,13 +320,14 @@ smoothScatter(sce$log10_total_counts, sce$log10_total_features_by_counts, nbin =
 abline(v = knee)
 ```
 
-While there are various ways to filter cells, here we will just use the barcode ranks knee calculation for the time being. We subset on the columns those that have more counts than our calculated knee.
+While there are various ways to filter cells, here we actually will not need to perform any filtering, as the data has already undergone a stringent quality control, and thus all the cells can be considered high quality.
 
-```{r}
+For the sake of completeness, we will demonstrate here - without evaluating - how to subset based on the previously calculated barcode ranks knee:
+
+```{r, eval=FALSE}
+## not run
 sce <- sce[, sce$log10_total_counts > knee]
 ```
-
-We end up keeping `r ncol(sce)` cells for subsequent steps of the analysis.
 
 
 ### Normalizing Data
@@ -570,22 +571,27 @@ Manually classifying cell types present in an scRNA-seq experiment can be prone 
 
 One such approach - `cellassign` - applies labels in a single-cell manner based on a gene by cell type "marker matrix". Here, we utilize an existing gene by cell type annotation from a publication by [Becht et al. (2016)](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-1070-5) which categorizes genes into cell types based on the specificity of their expression.
 
-Let's first read in the marker matrix from the paper's associated [Github](https://github.com/ebecht/mcpcounter):
+Let's first construct a marker matrix loosely inspired by the [Seurat PBMC 3k tutorial](https://satijalab.org/seurat/v3.0/pbmc3k_tutorial.html):
 
 ```{r}
-anno <- read.table('https://raw.githubusercontent.com/ebecht/MCPcounter/master/Signatures/genes.txt')
-colnames(anno) <- c('SYMBOL', 'cell_type', 'ENTREZID')
-anno <- anno[, -3]
-
-anno
-```
-
-Based on our manual inspection, we can take this annotation and filter down to our primary cell types of interest.
-
-```{r}
-## filter down to predominant cell types of interest to increase signal
-ci <- c('T cells', 'B lineage', 'NK cells', 'Myeloid dendritic cells')
-anno <- anno[(anno$cell_type %in% ci), ]
+anno <- data.frame(
+    SYMBOL = c(
+        'IL7R', 'CCR7', 'CD4', 'CD3D', 'CD3E',
+        'CD14', 'LYZ',
+        'MS4A1', 'CD79A', 'CD79B',
+        'CD8A', 'CD8B', 'CD3D', 'CD3E',
+        'GNLY', 'NKG7',
+        'FCER1A', 'CST3', 'ITGAX'
+    ),
+    cell_type = c(
+        rep('CD4 T cell', 5),
+        rep('Monocyte', 2),
+        rep('B cell', 3),
+        rep('CD8 T cell', 4),
+        rep('NK cell', 2),
+        rep('Dendritic cell', 3)
+    )
+)
 ```
 
 Lastly, we'll need to reformat this matrix to fit the expectations of `cellassign`, chiefly to convert the annotation into a binary matrix of genes (rows) by cell types (columns):
@@ -613,11 +619,7 @@ set.seed(1234)
 reticulate::py_set_seed(1234)
 fit <- cellassign(sce[rownames(rho), ],
                   marker_gene_info = rho,
-                  s = sizeFactors(sce),
-                  learning_rate = 0.01,
-                  min_delta = 0.5,
-                  shrinkage = TRUE,
-                  max_iter_em = 200000)
+                  s = sizeFactors(sce))
 
 ## add cell type info into colData
 colData(sce)$cellassign_type <- fit$cell_type
@@ -627,8 +629,6 @@ colData(sce)$cellassign_type <- fit$cell_type
 ## plot the cellassign results on UMAP
 plotUMAP(sce, colour_by = 'cellassign_type')
 ```
-
-We can see that `cellassign` has produced cell type labels in a manner largely consistent with our expectations based on manual inspection. 
 
 In practice, some combination of the above manual and automated classification schema will likely be necessary to properly annotate an scRNA-seq dataset.
 
