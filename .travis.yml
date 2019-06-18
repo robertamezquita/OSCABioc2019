@@ -8,8 +8,10 @@ r:
   - bioc-devel
 before_install:
   - tlmgr install index
-script:
-  echo "hello world, I'mma install all the pkgs"
+
+  
+# script:
+#   echo "hello world, I'mma install all the pkgs"
 
   
 # install:
