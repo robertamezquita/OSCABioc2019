@@ -33,3 +33,5 @@ Imports:
     tidyr,
     tensorflow,
     cellassign
+Remotes:
+    Irrationone/cellassign
