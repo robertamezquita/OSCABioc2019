@@ -18,7 +18,7 @@ vignette: >
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
                       message = FALSE, warning = FALSE, error = FALSE,
-                      cache = TRUE)
+                      cache = FALSE)
 options(digits = 4)
 ```
 
@@ -69,8 +69,8 @@ BiocManager::install(c(
                  'TENxPBMCData',    # dataset
                  'DropletUtils',    # quality control
                  'scater', 'scran', # normalization/downstream analysis/viz
-                 ## 'iSEE',         # interactive viz (not run)
-                 'igraph',          # for clustering methods
+                 'iSEE',            # interactive viz (not run)
+                 'BiocParallel',    # faster computation
                  'devtools',        # for installing cellassign
                  'tidyr',           # data munging
                  'tensorflow'))     # cellassign dependency
@@ -91,28 +91,30 @@ devtools::install_github('irrationone/cellassign') # automated annotation of cel
 * [cellassign](https://github.com/Irrationone/cellassign)
 
 ```{r, eval = FALSE}
-library(TENxPBMCData)
-library(DropletUtils)
-library(scater)
-library(scran)
-library(igraph)
-library(devtools)
-library(tidyr)
-library(tensorflow)
-library(cellassign)
-```
-
-```{r, echo = FALSE}
-suppressPackageStartupMessages({
-    library(TENxPBMCData)
-    library(DropletUtils)
-    library(scater)
-    library(scran)
-    library(igraph)
     library(devtools)
     library(tidyr)
     library(tensorflow)
     library(cellassign)
+    library(BiocParallel)
+    library(iSEE)
+    library(TENxPBMCData)
+    library(DropletUtils)
+    library(scater)
+    library(scran)
+```
+
+```{r, echo = FALSE}
+suppressPackageStartupMessages({
+    library(devtools)
+    library(tidyr)
+    library(tensorflow)
+    library(cellassign)
+    library(BiocParallel)
+    library(iSEE)
+    library(TENxPBMCData)
+    library(DropletUtils)
+    library(scater)
+    library(scran)
 })
 ```
 
@@ -224,7 +226,17 @@ From here on out, we will be working with a small example dataset from the `TENx
 ```{r}
 library(TENxPBMCData)
 sce <- TENxPBMCData('pbmc3k')
+```
 
+<!-- ```{r, include=FALSE, eval=FALSE} -->
+<!-- saveRDS(sce, 'inst/extdata/pbmc3k_raw.rds') -->
+<!-- ``` -->
+
+<!-- ```{r, include=FALSE} -->
+<!-- sce <- readRDS(file.path(system.file(package='OSCABioc2019', 'extdata'), 'pbmc3k_raw.rds')) -->
+<!-- ``` -->
+
+```{r}
 sce
 ```
 
@@ -249,7 +261,7 @@ We can avoid future errors (and many headaches) by removing duplicates before an
 dupes <- duplicated(rownames(sce))
 
 ## keep all the not (!) duplicated genes
-sce <- sce[!dupes, ] 
+sce <- sce[!dupes, ]
 ```
 
 Keep in mind, the above is likely the most inelegant solution to the problem. Other methods could include, from the duplicated set of genes, choosing the one with the highest expression, aggregating the counts per cell, or keeping them all by adding an additional suffix to make the row names unique. Each has its own tradeoffs, so we leave this choice up to the diligent reader.
@@ -354,7 +366,7 @@ sce <- normalize(sce)
 assays(sce)
 ```
 
-We see above that we now have two assays, `counts` and `logcounts`. 
+If we inspect our `sce`, we can see that we now have two assays, `counts` and `logcounts`. 
 
 
 ### Feature Selection
@@ -461,6 +473,7 @@ snng <- buildSNNGraph(sce, k = 50, d = 20)
 Following the graph construction, we can calculate the clusters using a variety of different graph-based methods from the `igraph` package. Here, we use the louvain method to determine our cell's cluster memberships.
 
 ```{r}
+set.seed(1234)
 snng_clusters <- igraph::cluster_louvain(snng)
 ```
 
@@ -540,11 +553,11 @@ plotHeatmap(sce, genes,
 
 Based on the heatmap output (and *a priori* knowledge), we can make some observations:
 
-* CD79A/CD79B, markers of B cells, are uniquely and highly expressed in cluster 2
-* HLA genes, present on antigen presenting cells (APCs), are highly expressed across clusters 2 and 3
+* CD79A/CD79B/MS4A1, markers of B cells, are uniquely and highly expressed in cluster 1
+* HLA genes, present on antigen presenting cells (APCs), are highly expressed across clusters 1 and 3
 * LYZ, a marker of dendritic cells (an APC), is highly expressed in cluster 3
-* Granzymes A and B (GZMA/GZMB), and NKG7, markers of cytotoxic cells such as CD8s and NK cells, are highly expressed within (a subset of cluster 4)
-* CD3D/CD3E, markers of T cells, are expressed across clusters 5, 1, and 4
+* NKG7/GNLY, markers of NK cells, are expressed within cluster 5
+* CD3D/CD3E//IL7R, markers of T cells, are expressed across clusters 2 and 4, and a subset of 5
 
 Finally, we can view a selection of the genes mentioned above on our previous UMAP plot:
 
@@ -557,10 +570,11 @@ plotUMAP(sce, colour_by = "CD3D")
 
 Combining the information derived from our heatmap and viewing these genes on our UMAP, we can come to the following conclusion:
 
-* Cluster 2 is likely to be B cells
-* Cluster 3 is likely to be dendritic cells
-* Clusters 1, 5, 4 appear to represent a spectrum of cells with cytotoxic capabilities, likely composed of a combination of T cells and NK cells,
-* Cluster 4 exhibits an strong NK cell signature on the basis of NKG7
+* Cluster 1 is likely to be B cells
+* Cluster 3 is likely to be dendritic cells and other innate cells
+* Clusters 2, 4, 5 appear to represent a spectrum of cells with cytotoxic capabilities, likely composed of a combination of T cells and NK cells
+* Clusters 4 and 5 are likely to be T cells
+* Cluster 5 exhibits a strong NK/cytotoxic cell signature on the basis of NKG7/GNLY and GZM family genes
 
 Now that we've manually sorted our dataset on the basis of prior knowledge, let's try a more automated approach using publicly available markers.
 
@@ -571,7 +585,7 @@ Manually classifying cell types present in an scRNA-seq experiment can be prone 
 
 One such approach - `cellassign` - applies labels in a single-cell manner based on a gene by cell type "marker matrix". Here, we utilize an existing gene by cell type annotation from a publication by [Becht et al. (2016)](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-1070-5) which categorizes genes into cell types based on the specificity of their expression.
 
-Let's first construct a marker matrix loosely inspired by the [Seurat PBMC 3k tutorial](https://satijalab.org/seurat/v3.0/pbmc3k_tutorial.html):
+Let's first construct a marker matrix loosely inspired by the [Seurat PBMC 3k tutorial](https://satijalab.org/seurat/v3.0/pbmc3k_tutorial.html), with some of the manual markers defined above added in:
 
 ```{r}
 anno <- data.frame(
@@ -594,7 +608,7 @@ anno <- data.frame(
 )
 ```
 
-Lastly, we'll need to reformat this matrix to fit the expectations of `cellassign`, chiefly to convert the annotation into a binary matrix of genes (rows) by cell types (columns):
+Lastly, we'll need to reformat this matrix to fit the expectations of `cellassign`, converting the annotation into a binary matrix of genes (rows) by cell types (columns):
 
 ```{r}
 ## construct rho (binary marker matrix)
@@ -610,7 +624,8 @@ rho[1:3, ]
 
 We can then run the `cellassign` method to produce cell type labels on a per cell basis:
 
-```{r}
+```{r, eval=FALSE}
+## not run in vignette - results pulled from a prior run
 ## devtools::install_github('Irrationone/cellassign')
 library(cellassign)
 library(tensorflow)
@@ -623,6 +638,16 @@ fit <- cellassign(sce[rownames(rho), ],
 
 ## add cell type info into colData
 colData(sce)$cellassign_type <- fit$cell_type
+```
+
+```{r, include=FALSE, eval=FALSE}
+## save cellassign results from one run to pull up for plot
+saveRDS(fit$cell_type, 'inst/extdata/cellassign_type.rds')
+```
+
+```{r, include=FALSE}
+cellassign_type <- readRDS(file.path(system.file(package='OSCABioc2019', 'extdata'), 'cellassign_type.rds'))
+colData(sce)$cellassign_type <- cellassign_type
 ```
 
 ```{r, fig.cap="UMAP showing the results of automated label assignment as performed by cellassign."}
