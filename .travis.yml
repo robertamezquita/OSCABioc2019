@@ -9,8 +9,7 @@ r:
 before_install:
   - tlmgr install index
 script:
-  echo "hello world"
-  #R -e 'devtools::check()'
+  R -e 'devtools::check()'
 
 
   
