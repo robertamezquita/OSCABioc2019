@@ -8,7 +8,7 @@ r:
   - bioc-devel
 before_install:
   - tlmgr install index
-install: travis_wait mvn install
+install: travis_wait 30 mvn install
 
   
 # install:
