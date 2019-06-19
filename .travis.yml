@@ -8,14 +8,12 @@ r:
   - bioc-devel
 before_install:
   - tlmgr install index
-install:
-  R -e 'install.packages("roxygen2")'
 script:
-  echo "hello world"
+  R -e 'devtools::check()'
+
+
 # script:
-#   R -e 'devtools::check()'
-
-
+#   echo "hello world"
   
 # install:
 #   R -e 'install.packages(c("devtools", "KernSmooth", "qpdf", "uwot", "pheatmap")); devtools::install_github("irrationone/cellassign"); BiocManager::install(c("SingleCellExperiment", "TENxPBMCData", "DropletUtils", "scater", "scran", "tidyr", "iSEE", "tensorflow", "BiocParallel"), version = "devel", ask = FALSE)'
