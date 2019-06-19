@@ -8,27 +8,5 @@ r:
   - bioc-devel
 before_install:
   - tlmgr install index
-install: travis_wait 30 mvn install
-# script:
-#   R -e 'devtools::check()'
-
-
-# script:
-#   echo "hello world"
-  
-# install:
-#   R -e 'install.packages(c("devtools", "KernSmooth", "qpdf", "uwot", "pheatmap")); devtools::install_github("irrationone/cellassign"); BiocManager::install(c("SingleCellExperiment", "TENxPBMCData", "DropletUtils", "scater", "scran", "tidyr", "iSEE", "tensorflow", "BiocParallel"), version = "devel", ask = FALSE)'
-
-# BiocManager::install(version = "3.10", ask=FALSE); 
-
-# language: r
-# sudo: false
-# os:
-#   - linux
-# cache:
-#   packages: true
-# r:
-#   - bioc-devel
-# before_install:
-#   - tlmgr install index
-
+script:
+- travis_wait 45 R -e 'devtools::check()'
