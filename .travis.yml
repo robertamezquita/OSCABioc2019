@@ -8,8 +8,10 @@ r:
   - bioc-devel
 before_install:
   - tlmgr install index
-script:
-  R -e 'devtools::check()'
+install:
+  R -e 'install.packages("roxygen2")'
+# script:
+#   R -e 'devtools::check()'
 
 
   
