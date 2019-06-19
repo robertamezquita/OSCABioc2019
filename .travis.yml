@@ -10,6 +10,8 @@ before_install:
   - tlmgr install index
 install:
   R -e 'install.packages("roxygen2")'
+script:
+  echo "hello world"
 # script:
 #   R -e 'devtools::check()'
 
