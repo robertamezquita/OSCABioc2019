@@ -24,7 +24,6 @@ Imports:
     devtools,
     KernSmooth,
     igraph,
-    uwot,
     pheatmap,
     qpdf,
     BiocManager,

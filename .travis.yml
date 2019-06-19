@@ -8,8 +8,9 @@ r:
   - bioc-devel
 before_install:
   - tlmgr install index
-script:
-  R -e 'devtools::check()'
+install: travis_wait 30 mvn install
+# script:
+#   R -e 'devtools::check()'
 
 
 # script:
