@@ -21,6 +21,10 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
 Imports:
     SingleCellExperiment,
+    KernSmooth,
+    uwot,
+    pheatmap,
+    qpdf,
     BiocManager,
     BiocParallel,
     iSEE,
