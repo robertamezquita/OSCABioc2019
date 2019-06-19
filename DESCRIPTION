@@ -22,6 +22,7 @@ RoxygenNote: 6.1.1
 Imports:
     SingleCellExperiment,
     KernSmooth,
+    igraph,
     uwot,
     pheatmap,
     qpdf,

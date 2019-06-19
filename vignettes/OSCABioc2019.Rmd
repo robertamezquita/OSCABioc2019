@@ -637,11 +637,11 @@ colData(sce)$cellassign_type <- fit$cell_type
 
 ```{r, include=FALSE, eval=FALSE}
 ## save cellassign results from one run to pull up for plot
-saveRDS(fit$cell_type, 'inst/extdata/cellassign_type.rds')
+saveRDS(fit$cell_type, 'inst/vignettes/cellassign_type.rds')
 ```
 
 ```{r, include=FALSE}
-cellassign_type <- readRDS(file.path(system.file(package='OSCABioc2019', 'extdata'), 'cellassign_type.rds'))
+cellassign_type <- readRDS(file.path(system.file(package='OSCABioc2019', 'vignettes'), 'cellassign_type.rds'))
 colData(sce)$cellassign_type <- cellassign_type
 ```
 
