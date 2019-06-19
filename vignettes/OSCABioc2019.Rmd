@@ -75,6 +75,7 @@ BiocManager::install(c(
                  'tidyr',           # data munging
                  'tensorflow'))     # cellassign dependency
 
+## optional for annotation section:
 devtools::install_github('irrationone/cellassign') # automated annotation of cells
 ```
 
@@ -91,7 +92,6 @@ devtools::install_github('irrationone/cellassign') # automated annotation of cel
 * [cellassign](https://github.com/Irrationone/cellassign)
 
 ```{r, eval = FALSE}
-    library(devtools)
     library(tidyr)
     library(BiocParallel)
     library(iSEE)
@@ -103,7 +103,6 @@ devtools::install_github('irrationone/cellassign') # automated annotation of cel
 
 ```{r, echo = FALSE}
 suppressPackageStartupMessages({
-    library(devtools)
     library(tidyr)
     library(BiocParallel)
     library(iSEE)
