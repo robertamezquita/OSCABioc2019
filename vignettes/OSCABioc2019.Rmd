@@ -347,8 +347,9 @@ First however, we will need to calculate scaling factors per cell. This function
 ```{r}
 library(scran)
 
-quick_clusters <- quickCluster(sce, use.ranks = FALSE)
-sce <- computeSumFactors(sce, clusters = quick_clusters)
+## not run: AMI hangs here
+## quick_clusters <- quickCluster(sce, use.ranks = FALSE)
+## sce <- computeSumFactors(sce, clusters = quick_clusters)
 ```
 
 These (cell) size factors are then used to log-normalize the counts data:
