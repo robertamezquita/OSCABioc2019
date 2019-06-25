@@ -30,6 +30,7 @@ Imports:
     BiocParallel,
     iSEE,
     TENxPBMCData,
+    HCAData,
     DropletUtils,
     scater,
     scran,

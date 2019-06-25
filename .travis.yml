@@ -9,6 +9,4 @@ r:
 before_install:
   - tlmgr install index
 script:
-  echo "This will take too long to compile."
-# script:
-# - travis_wait 45 R -e 'devtools::check()'
+  - travis_wait 45 R -e 'devtools::check()'
