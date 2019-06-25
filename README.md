@@ -32,7 +32,7 @@ Students will be able to run code interactively during the workshop on their per
 * [SingleCellExperiment](https://bioconductor.org/packages/SingleCellExperiment)
 * [scater](https://bioconductor.org/packages/scater)
 * [TENxPBMCData](https://bioconductor.org/packages/TENxPBMCData)
-* [DropletUtils](https://bioconductor.org/packages/DropletUtils))
+* [DropletUtils](https://bioconductor.org/packages/DropletUtils)
 * [scater](https://bioconductor.org/packages/scater)
 * [scran](https://bioconductor.org/packages/scran)
 * [iSEE](https://bioconductor.org/packages/iSEE)
